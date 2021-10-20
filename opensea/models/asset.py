@@ -15,6 +15,8 @@ class Asset:
         self.description = json_data["description"]
         self.token_id = json_data["token_id"]
         self.asset_url = json_data["permalink"]
+        self.image_url = json_data["image_url"]
+
         self.contract_address = json_data["asset_contract"]["address"]
 
         # COLLECTION DETAILS

@@ -4,7 +4,6 @@ from requests.models import Response
 from opensea.common import get_opensea
 from opensea.models.asset import Asset
 
-
 def get_assets(
     owner: str = "",
     order_by: str = "pk",
