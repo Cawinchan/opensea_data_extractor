@@ -38,16 +38,25 @@ def get_assets(
     :param collection: Filters NFT assets that belong to a specific collection.
     :type collection: str
     """
-
-    api_parameters = {
+    if token_ids == "":
+        api_parameters = {
         "owner": owner,
         "order_by": order_by,
         "order_direction": order_direction,
         "offset": offset,
         "limit": limit,
         "collection": collection,
-        "token_ids": token_ids
     }
+    else:
+        api_parameters = {
+            "owner": owner,
+            "order_by": order_by,
+            "order_direction": order_direction,
+            "offset": offset,
+            "limit": limit,
+            "collection": collection,
+            "token_ids": token_ids
+        }
 
     response = get_opensea("assets", **api_parameters)
     if isinstance(response, dict):
