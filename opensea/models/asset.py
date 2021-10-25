@@ -29,6 +29,9 @@ class Asset:
         # OWNER DETAILS
         self.owner = Account(json_data["owner"])
 
+        # LAST SALE DETAILS
+        self.last_sale = json_data["last_sale"]["total_price"]
+
         self.__ASSET_API_URL = f"https://api.opensea.io/api/v1/asset/{self.contract_address}/{self.token_id}"
 
     def get_json(self):

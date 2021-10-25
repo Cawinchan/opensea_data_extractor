@@ -11,7 +11,8 @@ def get_assets(
     limit: int = 10,
     offset: int = 0,
     verified_only: bool = False,
-    collection: str = ""
+    collection: str = "",
+    token_ids: str = ""
 ) -> Union[List[Asset], Response]:
     """
     Retrieves NFT assets from opensea.io.
@@ -44,7 +45,8 @@ def get_assets(
         "order_direction": order_direction,
         "offset": offset,
         "limit": limit,
-        "collection": collection
+        "collection": collection,
+        "token_ids": token_ids
     }
 
     response = get_opensea("assets", **api_parameters)
