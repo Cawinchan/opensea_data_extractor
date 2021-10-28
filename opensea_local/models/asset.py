@@ -16,9 +16,15 @@ class Asset:
         self.description = json_data["description"]
         self.token_id = json_data["token_id"]
         self.asset_url = json_data["permalink"]
-        self.image_url = json_data["image_url"]
+        self.image_url = json_data["image_url"] # Note image_url instead of orignal choosen
+        try:
+            self.animation_url = json_data["animation_url"] # Can be the same as image_url
+        except:
+            self.animation_url = 0
+        if self.image_url == self.animation_url:
+            self.animation_url = 0
 
-        self.contract_address = json_data["asset_contract"]["address"]
+        self.contract_address = json_data["asset_contract"]["address"] 
 
         # COLLECTION DETAILS
         self.collection_name = json_data["collection"]["name"]
@@ -46,6 +52,13 @@ class Asset:
         else:
             return None
 
+    def get_event_json(self):
+        response = request("GET", self.__ASSET_API_URL)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return None
+
     def get_floor_price(self):
         """
         Returns the floor price of the collection an asset belongs to
@@ -66,3 +79,6 @@ class Asset:
         asset_json = self.get_json()
         average_price = asset_json["collection"]["stats"]["average_price"]
         return average_price
+
+    
+

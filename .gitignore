@@ -7,3 +7,14 @@ __pycache__
 opensea.egg-info/
 dist/
 build/
+
+# All mp4, mp3, gif, png and jpg
+*.mp4
+*.mp3
+*.gif
+*.png
+*.jpg
+*.svg
+
+# All contents in contents
+data/raw/contents/*
