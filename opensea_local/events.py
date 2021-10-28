@@ -1,7 +1,7 @@
 from typing import List, Union
 from requests.models import Response
 
-from opensea.common import get_opensea
+from opensea_local.common import get_opensea
 
 def get_events(
     asset_contract_address: str = "",

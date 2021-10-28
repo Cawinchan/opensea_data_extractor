@@ -10,6 +10,7 @@ class Asset:
         :param json_data: json object returned by the opensea-api
         :type json_data: dict
         """
+
         # ASSET DETAILS
         self.name = json_data["name"]
         self.description = json_data["description"]
@@ -30,7 +31,11 @@ class Asset:
         self.owner = Account(json_data["owner"])
 
         # LAST SALE DETAILS
-        self.last_sale = json_data["last_sale"]["total_price"]
+        try:
+            self.last_sale = json_data["last_sale"]["total_price"]
+        except:
+            print("asset: {}, token_id: {} has no last sale".format(self.name, self.token_id)) 
+            self.last_sale = 0 
 
         self.__ASSET_API_URL = f"https://api.opensea.io/api/v1/asset/{self.contract_address}/{self.token_id}"
 

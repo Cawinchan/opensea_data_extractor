@@ -1,8 +1,8 @@
 from typing import Union, List
 from requests.models import Response
 
-from opensea.common import get_opensea
-from opensea.models.bundle import Bundle
+from opensea_local.common import get_opensea
+from opensea_local.models.bundle import Bundle
 
 
 def get_bundles(

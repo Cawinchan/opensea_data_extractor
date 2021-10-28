@@ -1,8 +1,8 @@
 from typing import List, Union
 from requests.models import Response
 
-from opensea.common import get_opensea
-from opensea.models.asset import Asset
+from opensea_local.common import get_opensea
+from opensea_local.models.asset import Asset
 
 def get_assets(
     owner: str = "",
@@ -11,8 +11,8 @@ def get_assets(
     limit: int = 10,
     offset: int = 0,
     verified_only: bool = False,
-    collection: str = "",
-    token_ids: str = ""
+    asset_contract_address: str = "",
+    # token_ids: str = ""
 ) -> Union[List[Asset], Response]:
     """
     Retrieves NFT assets from opensea.io.
@@ -38,25 +38,16 @@ def get_assets(
     :param collection: Filters NFT assets that belong to a specific collection.
     :type collection: str
     """
-    if token_ids == "":
-        api_parameters = {
+
+    api_parameters = {
         "owner": owner,
         "order_by": order_by,
         "order_direction": order_direction,
         "offset": offset,
         "limit": limit,
-        "collection": collection,
+        "asset_contract_address": asset_contract_address,
+        # "token_ids": token_ids
     }
-    else:
-        api_parameters = {
-            "owner": owner,
-            "order_by": order_by,
-            "order_direction": order_direction,
-            "offset": offset,
-            "limit": limit,
-            "collection": collection,
-            "token_ids": token_ids
-        }
 
     response = get_opensea("assets", **api_parameters)
     if isinstance(response, dict):
