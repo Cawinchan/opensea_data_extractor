@@ -13,7 +13,6 @@ class Asset:
 
         # ASSET DETAILS
         self.name = json_data["name"]
-        self.description = json_data["description"]
         self.token_id = json_data["token_id"]
         self.asset_url = json_data["permalink"]
         self.image_url = json_data["image_url"] # Note image_url instead of orignal choosen
@@ -33,15 +32,41 @@ class Asset:
         self.verification_status = json_data["collection"]["safelist_request_status"]
         self.is_verified = json_data["collection"]["safelist_request_status"] == "verified"
 
-        # OWNER DETAILS
-        self.owner = Account(json_data["owner"])
+        # STATS DETAILS
+        self.average_price = json_data["collection"]["stats"]["average_price"]
+        self.count = json_data["collection"]["stats"]["count"]
+        self.floor_price = json_data["collection"]["stats"]["floor_price"]
+        self.market_cap = json_data["collection"]["stats"]["market_cap"]
+        self.num_owners = json_data["collection"]["stats"]["num_owners"]
+        self.one_day_average_price = json_data["collection"]["stats"]["one_day_average_price"]
+        self.one_day_change = json_data["collection"]["stats"]["one_day_change"]
+        self.one_day_sales = json_data["collection"]["stats"]["one_day_sales"]
+        self.one_day_volume = json_data["collection"]["stats"]["one_day_volume"]
+        self.seven_day_average_price = json_data["collection"]["stats"]["seven_day_average_price"]
+        self.seven_day_change = json_data["collection"]["stats"]["seven_day_change"]
+        self.seven_day_sales = json_data["collection"]["stats"]["seven_day_sales"]
+        self.seven_day_volume = json_data["collection"]["stats"]["seven_day_volume"]
+        self.thirty_day_average_pric = json_data["collection"]["stats"]["thirty_day_average_price"]
+        self.thirty_day_change = json_data["collection"]["stats"]["thirty_day_change"]
+        self.thirty_day_sales = json_data["collection"]["stats"]["thirty_day_sales"]
+        self.thirty_day_volume = json_data["collection"]["stats"]["thirty_day_volume"]
+        self.total_sales = json_data["collection"]["stats"]["total_sales"]
+        self.total_supply = json_data["collection"]["stats"]["total_supply"]
+        self.total_volume = json_data["collection"]["stats"]["total_volume"]
+
+        # CREATOR DETAILS
+        self.description = json_data["creater"]["description"]
 
         # LAST SALE DETAILS
+        self.sale_timestamp = json_data["last_sale"]["payment_token"]["usd_price"] # Current price of eth
         try:
             self.last_sale = json_data["last_sale"]["total_price"]
         except:
             print("asset: {}, token_id: {} has no last sale".format(self.name, self.token_id)) 
             self.last_sale = 0 
+
+        # OWNER DETAILS
+        self.owner = Account(json_data["owner"])
 
         self.__ASSET_API_URL = f"https://api.opensea.io/api/v1/asset/{self.contract_address}/{self.token_id}"
 

@@ -16,5 +16,9 @@ build/
 *.jpg
 *.svg
 
-# All contents in contents
-data/raw/contents/*
+# All contents in media
+data/raw/media/*
+
+# pyc 
+*.pyc
+
