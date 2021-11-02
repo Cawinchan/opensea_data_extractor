@@ -36,7 +36,7 @@ collection = {
 # "fidenza-by-tyler-hobbs": https://opensea.io/assets/0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270/78000895
 # "lostpoets": https://opensea.io/assets/0x4b3406a41399c7fd2ba65cbc93697ad9e7ea61e5/5542
 # "superrare": (Video) https://opensea.io/assets/0xb932a70a57673d89f4acffbe830e8ed7f75fb9e0/12325
-#              (GIF) https://opensea.io/assets/0xb932a70a57673d89f4acffbe830e8ed7f75fb9e0/12335
+#              (GIF) https://opensea.io/as  sets/0xb932a70a57673d89f4acffbe830e8ed7f75fb9e0/12335
 #              (Image) https://opensea.io/assets/0xb932a70a57673d89f4acffbe830e8ed7f75fb9e0/22553
 # "song-a-day": https://opensea.io/assets/0x495f947276749ce646f68ac8c248420045cb7b5e/27853175353995272517766450193869818424107874020190547876689048363464159920129
 # "eulerbeats-enigma": https://opensea.io/assets/0xa98771a46dcb34b34cdad5355718f8a97c8e603e/244847083777
