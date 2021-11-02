@@ -34,13 +34,14 @@ def nft_download(collection,number_of_nfts_per_collection,maximum_nfts_checked,o
                     if int(asset.last_sale) != 0:
                         print(asset.name, asset.last_sale)
                         os.makedirs("data/raw/json",exist_ok=True)
-                        with open("data/raw/json/{}_{}.txt".format(collection_name_keys[i],asset.token_id), 'w') as outfile:
-                            json.dump(asset.get_json(), outfile)
-                        # os.makedirs("data/raw/events",exist_ok=True)
-                        # event_json = events.get_events(event_type='successful',asset_contract_address="0x06012c8cf97BEaD5deAe237070F9587f8E7A266d", token_id=896775)
-                        # with open("data/raw/events/{}_{}.txt".format(collection_name_keys[i],asset.token_id), 'w') as outfile:
-                        #     json.dump(event_json, outfile)    
-                        nft_count += 1
+                        if not os.path.isfile("data/raw/json/{}_{}.txt".format(collection_name_keys[i],asset.token_id)): 
+                            with open("data/raw/json/{}_{}.txt".format(collection_name_keys[i],asset.token_id), 'w') as outfile:
+                                json.dump(asset.get_json(), outfile)
+                            # os.makedirs("data/raw/events",exist_ok=True)
+                            # event_json = events.get_events(event_type='successful',asset_contract_address="0x06012c8cf97BEaD5deAe237070F9587f8E7A266d", token_id=896775)
+                            # with open("data/raw/events/{}_{}.txt".format(collection_name_keys[i],asset.token_id), 'w') as outfile:
+                            #     json.dump(event_json, outfile)    
+                            nft_count += 1
             except Exception as inst:
                 print(inst)
             time.sleep(5)

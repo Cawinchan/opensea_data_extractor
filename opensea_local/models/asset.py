@@ -13,15 +13,20 @@ class Asset:
 
         # ASSET DETAILS
         self.name = json_data["name"]
+        self.description = json_data["description"]
         self.token_id = json_data["token_id"]
         self.asset_url = json_data["permalink"]
         self.image_url = json_data["image_url"] # Note image_url instead of orignal choosen
+        # TODO: compare which one we should take Image_url or Image
+        self.image_original_url = json_data["image_original_url"] # Note image_url instead of orignal choosen
         try:
             self.animation_url = json_data["animation_url"] # Can be the same as image_url
+            self.animation_original_url = json_data["animation_original_url"] # Can be the same as image_url
         except:
-            self.animation_url = 0
+            self.animation_url = None
+            self.animation_original_url = None
         if self.image_url == self.animation_url:
-            self.animation_url = 0
+            self.animation_url = None
 
         self.contract_address = json_data["asset_contract"]["address"] 
 
@@ -46,7 +51,7 @@ class Asset:
         self.seven_day_change = json_data["collection"]["stats"]["seven_day_change"]
         self.seven_day_sales = json_data["collection"]["stats"]["seven_day_sales"]
         self.seven_day_volume = json_data["collection"]["stats"]["seven_day_volume"]
-        self.thirty_day_average_pric = json_data["collection"]["stats"]["thirty_day_average_price"]
+        self.thirty_day_average_price = json_data["collection"]["stats"]["thirty_day_average_price"]
         self.thirty_day_change = json_data["collection"]["stats"]["thirty_day_change"]
         self.thirty_day_sales = json_data["collection"]["stats"]["thirty_day_sales"]
         self.thirty_day_volume = json_data["collection"]["stats"]["thirty_day_volume"]
@@ -54,16 +59,34 @@ class Asset:
         self.total_supply = json_data["collection"]["stats"]["total_supply"]
         self.total_volume = json_data["collection"]["stats"]["total_volume"]
 
-        # CREATOR DETAILS
-        self.description = json_data["creater"]["description"]
-
         # LAST SALE DETAILS
-        self.sale_timestamp = json_data["last_sale"]["payment_token"]["usd_price"] # Current price of eth
+        self.sale_timestamp = json_data["last_sale"]["event_timestamp"] 
+        self.eth_usd_price = json_data["last_sale"]["payment_token"]["usd_price"] # Current price of eth
+        self.last_sale_decimals = json_data["last_sale"]["payment_token"]["decimals"]
         try:
             self.last_sale = json_data["last_sale"]["total_price"]
+
         except:
             print("asset: {}, token_id: {} has no last sale".format(self.name, self.token_id)) 
-            self.last_sale = 0 
+            self.last_sale = 0
+
+        # SOCIAL MEDIA DETAILS
+        try:
+            self.discord_url = json_data["collection"]["discord_url"]
+        except:
+            self.discord_url = None
+        try:
+            self.twitter_username = json_data["collection"]["twitter_username"]
+        except:
+            self.twitter_username = None
+        try:
+            self.instagram_username = json_data["collection"]["instagram_username"]
+        except:
+            self.instagram_username = None
+        try:
+            self.telegram_url = json_data["collection"]["telegram_url"]
+        except: 
+            self.telegram_url = None
 
         # OWNER DETAILS
         self.owner = Account(json_data["owner"])

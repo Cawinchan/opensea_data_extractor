@@ -21,7 +21,7 @@ collection = {
     "superrare": "0xb932a70a57673d89f4acffbe830e8ed7f75fb9e0", # (Image/GIFS) Art Rank #10 
     "song-a-day": "0x495f947276749ce646f68ac8c248420045cb7b5e", # (Video) Music Rank #2 
     "eulerbeats-enigma": "0xa98771a46dcb34b34cdad5355718f8a97c8e603e", # (Video) Music Rank #3
-    # "audioglyphs": "0xfb3765e0e7ac73e736566af913fa58c3cfd686b7", # (Video) Music Rank #5 
+    "audioglyphs": "0xfb3765e0e7ac73e736566af913fa58c3cfd686b7", # (Video) Music Rank #5 
     "the-weeknd-x-strangeloop-studio": "0xafae97dc068735bf4592d1b8a731080cc0015691", # (Video) 
     "spottiewifi": "0xa0e1b198bcc877a950a29512ab5c0ce1bb964c97", #(Music) Music Rank #8
     "jinglebe-nft-collection": "0x9951f5da4f4f21b7d39a80bc665edf31bd515009", #(Music) Music Rank #4 All time
