@@ -7,10 +7,17 @@ import urllib.request
 import os
 import logging
 from matplotlib import image
-
 import pandas as pd
 import numpy as np
 
+from shutil import copyfile
+from cairosvg import svg2png
+
+import sys
+ROOT_DIRECTORY = '/home/princeton/Documents/GitHub/project_numpie'
+sys.path.append(ROOT_DIRECTORY)
+from opensea_local import *
+  
 
 from opensea_local.models.asset import Asset
 
@@ -215,3 +222,97 @@ def create_dataframe(df_name="nft_data",dir="data/raw/json",output_dir="data/pre
             # break
     df = pd.DataFrame(arr,columns=column_header)
     df.to_csv("{}/{}.csv".format(output_dir,df_name))
+
+
+'''File types that exist in data/raw/media
+- mp4
+- mp3
+- gif
+- jpg, png, svg'''
+def analyse_folder(dir="data/raw/media",output_dir="data/processed"):
+    mp4 = _count_number_of_files(dir, '.mp4')
+    mp3 = _count_number_of_files(dir, '.mp3')
+    gif = _count_number_of_files(dir, '.gif')
+    jpg = _count_number_of_files(dir, '.jpg')
+    png = _count_number_of_files(dir, '.png')
+    svg = _count_number_of_files(dir, '.svg')
+    print('.mp4: ' + str(mp4))
+    print('.mp3: ' + str(mp3))
+    print('.gif: ' + str(gif))
+    print('.jpg: ' + str(jpg))
+    print('.png: ' + str(png))
+    print('.svg: ' + str(svg))
+    jpg_final = jpg + png + svg
+    print('Resulting jpg: ' + str(jpg_final))
+    total = mp4 + mp3 + gif + jpg + png + svg
+    print('Total: ' + str(total))
+
+def _count_number_of_files(dir, extension):
+    count = 0
+    for filename in os.listdir(dir):
+        if filename.endswith(extension):count +=1
+    return count
+
+def process_media(dir="data/raw/media"):
+    # uncomment them out and do individually to navigate errors better
+    # _process_video(dir)
+    # _process_audio(dir)
+    # _process_gif(dir)
+    # _process_images(dir)
+    pass
+
+
+def _process_video(dir):
+    for filename in os.listdir(dir):
+        if filename.endswith('.mp4'):
+            copyfile(ROOT_DIRECTORY + '/data/raw/media/' + filename, ROOT_DIRECTORY + '/data/processed/media/mp4/' + filename)
+
+def _process_audio(dir):
+    for filename in os.listdir(dir):
+        if filename.endswith('.mp3'):
+            copyfile(ROOT_DIRECTORY + '/data/raw/media/' + filename, ROOT_DIRECTORY + '/data/processed/media/mp3/' + filename)
+
+def _process_gif(dir):
+    for filename in os.listdir(dir):
+        if filename.endswith('.gif'):
+            copyfile(ROOT_DIRECTORY + '/data/raw/media/' + filename, ROOT_DIRECTORY + '/data/processed/media/gif/' + filename)
+
+from PIL import Image
+def _process_images(dir):
+    # ? handle jpg
+    for filename in os.listdir(dir):
+        if filename.endswith('.jpg'):
+            copyfile(ROOT_DIRECTORY + '/data/raw/media/' + filename, ROOT_DIRECTORY + '/data/processed/media/jpg/' + filename)
+
+    # ? handle png
+    for filename in os.listdir(dir):
+        if filename.endswith('.png'):
+            f = os.path.join(dir, filename)
+            with Image.open(f) as im:
+                rgb_im = im.convert('RGB')
+                rgb_im.save(ROOT_DIRECTORY + '/data/processed/media/jpg/' + filename[:-3] + 'jpg')
+
+    # ? handle svg
+    _handle_svg(dir)
+
+def _handle_svg(dir):
+    _svg_to_png(dir)
+    _png_to_jpg('data/processed/media/svg2png_temporary/')
+
+def _svg_to_png(dir):
+    for filename in os.listdir(dir):
+        if filename.endswith('.svg'):
+            f = os.path.join(dir, filename)
+            svg2png(url=ROOT_DIRECTORY + '/data/raw/media/' + filename, write_to= ROOT_DIRECTORY + '/data/processed/media/svg2png_temporary/' + filename[:-3] + 'png')
+
+def _png_to_jpg(dir):
+    for filename in os.listdir(dir):
+        if filename.endswith('.png'):
+            f = os.path.join(dir, filename)
+            with Image.open(f) as im:
+                rgb_im = im.convert('RGB')
+                rgb_im.save(ROOT_DIRECTORY + '/data/processed/media/jpg/' + filename[:-3] + 'jpg')
+
+
+analyse_folder()
+# process_media()
