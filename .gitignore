@@ -18,6 +18,7 @@ build/
 
 # All contents in media
 data/raw/media/*
+data/raw/processed/*
 
 # pyc 
 *.pyc
