@@ -23,13 +23,13 @@ def nft_download(collection,number_of_nfts_per_collection,maximum_nfts_checked,o
         # nft_count tracks how many nfts we have from a collection and offset helps us skip nft's checked
         if len(glob.glob(output_dir+"/"+collection_name_keys[i]+'_*')) < number_of_nfts_per_collection:
             nft_count = 0
-            offset = 2000
+            offset = 0
             while nft_count < number_of_nfts_per_collection and offset < (number_of_nfts_per_collection*2):
                 print("nft_count: ",nft_count)
                 print("collection name: {} collection addr: {} nft count: {} offset: {}".format(collection_name_keys[i],collection.get(collection_name_keys[i]),nft_count,offset))
                 offset += 30
                 try:
-                    asset_list = assets.get_assets(asset_contract_address=str(collection.get(collection_name_keys[i])),limit=30,offset=offset,order_direction=order_direction)
+                    asset_list = assets.get_assets(asset_contract_address=str(collection.get(collection_name_keys[i])),limit=30,offset=offset,order_direction=order_direction,order_by="sale_date")
                     # time.delay(10)
                     for j in range(len(asset_list)):
                         asset = asset_list[j]
