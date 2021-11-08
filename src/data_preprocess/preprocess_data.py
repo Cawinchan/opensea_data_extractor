@@ -9,15 +9,15 @@ import logging
 from matplotlib import image
 import pandas as pd
 import numpy as np
+import glob 
 
 from shutil import copyfile
-from cairosvg import svg2png
+# from cairosvg import svg2png
 
 import sys
-ROOT_DIRECTORY = '/home/princeton/Documents/GitHub/project_numpie'
-sys.path.append(ROOT_DIRECTORY)
+# ROOT_DIRECTORY = '/home/princeton/Documents/GitHub/project_numpie'
+# sys.path.append(ROOT_DIRECTORY)
 from opensea_local import *
-  
 
 from opensea_local.models.asset import Asset
 
@@ -27,61 +27,119 @@ def download_all_nft_assets(dir="data/raw/json",output_dir="data/raw/media"):
     # Iterate over files in directory
     counter = 0
     print("number of files",len(os.listdir(dir)))
-    for filename in os.listdir(dir):
+    for filename in reversed(os.listdir(dir)):
         f = os.path.join(dir, filename)
         # Checking if it is a file
         if os.path.isfile(f):
             print("looking through {} file_num: {}".format(f,counter))
             counter += 1
-            file = open(f, "r")
-            asset = Asset(json.loads(file.read()))
-            
-            # Ensure ouput dir exists, else skip
-            os.makedirs(output_dir,exist_ok=True)
-            # Downlaod Image/Animation assets 
-            try:
-                url = asset.image_url
-                response = requests.get(url)
-                content_type = response.headers['content-type']
-                extension = mimetypes.guess_extension(content_type)
-                try:    
-                    with open("{}/{}_{}_{}".format(output_dir,asset.collection_slug,asset.token_id,extension), 'wb') as f:
-                        f.write(response.content)
-                except:
-                    pass
+            if not len(glob.glob(output_dir+"/"+filename.replace(".txt",""))) >= 1:
+                file = open(f, "r")
+                asset = Asset(json.loads(file.read()))
+                
+                # Ensure ouput dir exists, else skip
+                os.makedirs(output_dir,exist_ok=True)
+                # Downlaod Image/Animation assets 
                 try:
-                    urllib.request.urlretrieve(url, "{}/{}_{}_{}".format(output_dir,asset.collection_slug,asset.token_id,extension)) 
+                    image_url = asset.image_url
+                    response = requests.get(image_url)
+                    content_type = response.headers['content-type']
+                    image_extension = mimetypes.guess_extension(content_type)
+                    if image_extension == '.jpe':
+                            image_extension = '.jpeg'
+                    if image_extension in ('.svg','.jpeg','.png'):
+                        image_extension_type = 'image'
+                    if image_extension == '.gif':
+                        image_extension_type = 'gif'
+                    if image_extension == None:
+                        raise Exception
+                    try:    
+                        with open("{}/{}_{}{}".format(output_dir,asset.collection_slug,asset.token_id,image_extension), 'wb') as f:
+                            f.write(response.content)
+                    except:
+                        pass
+                    try:
+                        urllib.request.urlretrieve(url, "{}/{}_{}{}".format(output_dir,asset.collection_slug,asset.token_id,image_extension)) 
+                    except:
+                        pass
                 except:
-                    pass
-            except Exception as image_inst:
-                    logging.debug('{} was unable to be downloaded, error: {}'.format(asset.image_url,image_inst))
-                    print(url,image_inst) 
-            try:
-                url = asset.animation_url
-                response = requests.get(url)
-                content_type = response.headers['content-type']
-                extension = mimetypes.guess_extension(content_type)
-                try:    
-                    with open("{}/{}_{}_{}".format(output_dir,asset.collection_slug,asset.token_id,extension), 'wb') as f:
-                        f.write(response.content)
-                except:
-                    pass
+                    try:
+                        image_original_url = asset.image_original_url
+                        response = requests.get(image_original_url)
+                        content_type = response.headers['content-type']
+                        image_extension = mimetypes.guess_extension(content_type)
+                        if image_extension == '.jpe':
+                            image_extension = '.jpeg'
+                        if image_extension in ('.svg','.jpeg','.png'):
+                            image_extension_type = 'image'
+                        if image_extension == '.gif':
+                            image_extension_type = 'gif'
+                        if image_extension == None:
+                            raise Exception
+                        try:    
+                            with open("{}/{}_{}{}".format(output_dir,asset.collection_slug,asset.token_id,image_extension), 'wb') as f:
+                                f.write(response.content)
+                        except:
+                            pass
+                        try:
+                                urllib.request.urlretrieve(url, "{}/{}_{}{}".format(output_dir,asset.collection_slug,asset.token_id,image_extension)) 
+                        except:
+                            pass
+        
+                    except Exception as image_inst:
+                            image_extension = None
+                            image_extension_type = None
+                            logging.debug('{} was unable to get image, error: {}'.format(asset.image_url,image_inst))
+                            print(image_inst) 
                 try:
-                    urllib.request.urlretrieve(url, "{}/{}_{}_{}".format(output_dir,asset.collection_slug,asset.token_id,extension)) 
-                except:
-                    pass
-            except Exception as animation_inst:
-                    logging.debug('{} was unable to be downloaded, error: {}'.format(asset.animation_url,animation_inst))
-                    print(url,animation_inst) 
-            # Closing file
-            file.close()
-            # break
+                    url = asset.animation_url
+                    response = requests.get(url)
+                    content_type = response.headers['content-type']
+                    animation_extension = mimetypes.guess_extension(content_type)
+                    if animation_extension == '.mp2':
+                        animation_extension = '.mp3'
+                    if animation_extension == None:
+                        raise Exception
+                    try:    
+                        with open("{}/{}_{}{}".format(output_dir,asset.collection_slug,asset.token_id,animation_extension), 'wb') as f:
+                            f.write(response.content)
+                    except:
+                        pass
+                    try:
+                        urllib.request.urlretrieve(url, "{}/{}_{}{}".format(output_dir,asset.collection_slug,asset.token_id,animation_extension)) 
+                    except:
+                        pass
+                except Exception as animation_inst:
+                        try:
+                            animation_url = asset.animation_original_url
+                            esponse = requests.get(animation_url)
+                            content_type = response.headers['content-type']
+                            animation_extension = mimetypes.guess_extension(content_type)
+                            if animation_extension == '.mp2':
+                                animation_extension = '.mp3'
+                            if animation_extension == None:
+                                raise Exception
+                            try:    
+                                with open("{}/{}_{}{}".format(output_dir,asset.collection_slug,asset.token_id,animation_extension), 'wb') as f:
+                                    f.write(response.content)
+                            except:
+                                pass
+                            try:
+                                urllib.request.urlretrieve(url, "{}/{}_{}{}".format(output_dir,asset.collection_slug,asset.token_id,animation_extension)) 
+                            except:
+                                pass
+                        except Exception as animation_inst:
+                                logging.debug('{} was unable to be downloaded, error: {}'.format(asset.animation_url,animation_inst))
+                                print(url,animation_inst) 
+                # Closing file
+                file.close()
+                # break
 
 
 def create_dataframe(df_name="nft_data",dir="data/raw/json",output_dir="data/preprocessed"):    
     # Iterate over files in directory
     column_header = ['name', 'token_id', 'description', 'collection_name', 'collection_description' \
-                    ,'image_url', 'image_extension', 'image_extension_type', 'image_data_shape', 'animation_url', 'animation_extension' \
+                    ,'image_url', 'image_extension', 'image_extension_type', 'animation_url', 'animation_extension' \
                     ,'sale_timestamp', 'last_sale_float', 'average_price', 'eth_usd_price' \
                     ,'floor_price', 'market_cap','num_owners' \
                     ,'one_day_average_price', 'one_day_change', 'one_day_sales', 'one_day_volume' \
@@ -109,52 +167,82 @@ def create_dataframe(df_name="nft_data",dir="data/raw/json",output_dir="data/pre
             # Get Image/Animation data 
             try:
                 image_url = asset.image_url
-                image_original_url = asset.image_original_url
-                use_response = True
-                print(image_url.split('.')[-1])
-                if len(image_url.split('.')[-1]) <= 4:
-                    image_extension = image_url.split('.')[-1]
-                    if image_extension in ('svg','jpeg','png','gif'):
-                        image_extension = '.' + image_extension
-                        use_response = False
-                if len(image_original_url.split('.')[-1])  <= 4:
-                    image_extension = image_url.split('.')[-1]
-                    if image_extension in ('svg','jpeg','png','gif'):
-                        image_extension = '.' + image_extension
-                        use_response = False
-                image_extension_type = None
-                if use_response:
-                    response = requests.get(image_url)
-                    content_type = response.headers['content-type']
-                    image_extension = mimetypes.guess_extension(content_type)
+                response = requests.get(image_url)
+                content_type = response.headers['content-type']
+                image_extension = mimetypes.guess_extension(content_type)
                 if image_extension == '.jpe':
                     image_extension = '.jpeg'
                 if image_extension in ('.svg','.jpeg','.png'):
                     image_extension_type = 'image'
                 if image_extension == '.gif':
                     image_extension_type = 'gif'
+                if image_extension == None:
+                    raise Exception
                 
-            except Exception as image_inst:
-                    image_extension = None
-                    image_extension_type = None
-                    logging.debug('{} was unable to get image, error: {}'.format(asset.image_url,image_inst))
-                    print(image_url,image_inst) 
-            try: 
-                image_data = image.imread("{}/{}_{}_{}".format(output_dir,asset.collection_slug,asset.token_id,image_extension))
-                image_data_shape = image_data.shape
             except:
-                image_data = None
-                image_data_shape = None 
+                try:
+                    image_original_url = asset.image_original_url
+                    response = requests.get(image_original_url)
+                    content_type = response.headers['content-type']
+                    image_extension = mimetypes.guess_extension(content_type)
+                    if image_extension == '.jpe':
+                        image_extension = '.jpeg'
+                    if image_extension in ('.svg','.jpeg','.png'):
+                        extension_type = 'image'
+                    if image_extension == '.gif':
+                        extension_type = 'gif'
+                    if image_extension == None:
+                        raise Exception
+                    
+                except Exception as image_inst:
+                        image_extension = None
+                        image_extension_type = None
+                        logging.debug('{} was unable to get image, error: {}'.format(asset.image_url,image_inst))
+                        print(image_inst) 
+
+            # try: 
+            #     image_data = image.imread("{}/{}_{}{}".format(output_dir,asset.collection_slug,asset.token_id,image_extension))
+            #     image_data_shape = image_data.shape
+            # except:
+            #     image_data = None
+            #     image_data_shape = None 
             
             try:
                 animation_url = asset.animation_url
                 response = requests.get(animation_url)
                 content_type = response.headers['content-type']
                 animation_extension = mimetypes.guess_extension(content_type)
-            except Exception as animation_inst:
-                    animation_extension = None
-                    logging.debug('{}  was unable to get animation, error: {}'.format(asset.animation_url,animation_inst))
-                    print(animation_url,animation_inst)
+                if animation_extension == '.mp2':
+                    animation_extension = '.mp3'
+                if animation_extension == '.gif':
+                    extension_type = 'gif'
+                if animation_extension == '.mp4':
+                    extension_type = 'video'
+                if animation_extension == '.mp3':
+                    extension_type = 'audio'
+                if animation_extension == None:
+                    raise Exception
+            except:
+                try:
+                    animation_url = asset.animation_original_url
+                    print(animation_url)
+                    response = requests.get(animation_url)
+                    content_type = response.headers['content-type']
+                    animation_extension = mimetypes.guess_extension(content_type)
+                    if animation_extension == '.mp2':
+                        animation_extension = '.mp3'
+                    if animation_extension == '.gif':
+                        extension_type = 'gif'
+                    if animation_extension == '.mp4':
+                        extension_type = 'video'
+                    if animation_extension == '.mp3':
+                        extension_type = 'audio'
+                    if animation_extension == None:
+                        raise Exception
+                except Exception as animation_inst:
+                        animation_extension = None
+                        logging.debug('{}  was unable to get animation, error: {}'.format(asset.animation_url,animation_inst))
+                        print(animation_inst)
 
             # Get asset data 
             try: 
@@ -192,7 +280,7 @@ def create_dataframe(df_name="nft_data",dir="data/raw/json",output_dir="data/pre
                 thirty_day_volume = asset.thirty_day_volume
                 total_sales = asset.total_sales
                 total_supply = asset.total_supply
-                total_volume = asset.total_volume
+                total_volume = asset.total_volume                
 
                 # Get social media data 
                 discord_url = asset.discord_url
@@ -203,10 +291,11 @@ def create_dataframe(df_name="nft_data",dir="data/raw/json",output_dir="data/pre
             except Exception as price_data_inst:
                 logging.debug('Unable to get price_data, error: {}'.format(price_data_inst))
                 print(price_data_inst) 
+            
             arr.append((name, token_id, description, collection_name, collection_description \
-                                ,image_url, image_extension, image_extension_type, image_data_shape, animation_url, animation_extension \
+                                ,image_url, image_extension, extension_type, animation_url, animation_extension \
                                 ,sale_timestamp, last_sale_float, average_price, eth_usd_price \
-                                ,floor_price, market_cap,num_owners \
+                                ,floor_price, market_cap, num_owners \
                                 ,one_day_average_price, one_day_change, one_day_sales, one_day_volume \
                                 ,seven_day_average_price, seven_day_change, seven_day_sales, seven_day_volume \
                                 ,thirty_day_average_price, thirty_day_change, thirty_day_sales, thirty_day_volume \
@@ -220,8 +309,19 @@ def create_dataframe(df_name="nft_data",dir="data/raw/json",output_dir="data/pre
             # Closing file
             file.close()
             # break
-    df = pd.DataFrame(arr,columns=column_header)
-    df.to_csv("{}/{}.csv".format(output_dir,df_name))
+    nft_df = pd.DataFrame(arr,columns=column_header)
+    nft_df_merged = merge_ETH_data(nft_df)
+    nft_df_merged.to_csv("{}/{}.csv".format(output_dir,df_name))
+
+
+def merge_ETH_data(nft_df,csv_dir='data/preprocessed/coin_Ethereum.csv'):
+    nft_df['sale_date'] = pd.to_datetime(nft_df.sale_timestamp).dt.date
+    eth = pd.read_csv(csv_dir)
+    eth['date'] = pd.to_datetime(eth['Date']).dt.date 
+    eth.drop_duplicates(subset=['date'],inplace=True)
+    df_merged = nft_df.merge(eth, left_on='sale_date', right_on='date',how='left')
+    return df_merged
+
 
 
 '''File types that exist in data/raw/media
@@ -314,5 +414,5 @@ def _png_to_jpg(dir):
                 rgb_im.save(ROOT_DIRECTORY + '/data/processed/media/jpg/' + filename[:-3] + 'jpg')
 
 
-analyse_folder()
+# analyse_folder()
 # process_media()

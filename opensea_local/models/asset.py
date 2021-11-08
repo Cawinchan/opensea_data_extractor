@@ -27,6 +27,10 @@ class Asset:
             self.animation_original_url = None
         if self.image_url == self.animation_url:
             self.animation_url = None
+        try:
+            self.num_sales = json_data["num_sales"]
+        except:
+            self.num_sales = None
 
         self.contract_address = json_data["asset_contract"]["address"] 
 
@@ -38,37 +42,73 @@ class Asset:
         self.is_verified = json_data["collection"]["safelist_request_status"] == "verified"
 
         # STATS DETAILS
-        self.average_price = json_data["collection"]["stats"]["average_price"]
-        self.count = json_data["collection"]["stats"]["count"]
-        self.floor_price = json_data["collection"]["stats"]["floor_price"]
-        self.market_cap = json_data["collection"]["stats"]["market_cap"]
-        self.num_owners = json_data["collection"]["stats"]["num_owners"]
-        self.one_day_average_price = json_data["collection"]["stats"]["one_day_average_price"]
-        self.one_day_change = json_data["collection"]["stats"]["one_day_change"]
-        self.one_day_sales = json_data["collection"]["stats"]["one_day_sales"]
-        self.one_day_volume = json_data["collection"]["stats"]["one_day_volume"]
-        self.seven_day_average_price = json_data["collection"]["stats"]["seven_day_average_price"]
-        self.seven_day_change = json_data["collection"]["stats"]["seven_day_change"]
-        self.seven_day_sales = json_data["collection"]["stats"]["seven_day_sales"]
-        self.seven_day_volume = json_data["collection"]["stats"]["seven_day_volume"]
-        self.thirty_day_average_price = json_data["collection"]["stats"]["thirty_day_average_price"]
-        self.thirty_day_change = json_data["collection"]["stats"]["thirty_day_change"]
-        self.thirty_day_sales = json_data["collection"]["stats"]["thirty_day_sales"]
-        self.thirty_day_volume = json_data["collection"]["stats"]["thirty_day_volume"]
-        self.total_sales = json_data["collection"]["stats"]["total_sales"]
-        self.total_supply = json_data["collection"]["stats"]["total_supply"]
-        self.total_volume = json_data["collection"]["stats"]["total_volume"]
+        try:
+            stats = json_data["collection"]["stats"]
+            stats = True
+        except: 
+            stats = False 
+        
+        if stats:
+            self.average_price = json_data["collection"]["stats"]["average_price"]
+            
+            self.count = json_data["collection"]["stats"]["count"]
+
+            self.floor_price = json_data["collection"]["stats"]["floor_price"]
+
+            self.market_cap = json_data["collection"]["stats"]["market_cap"]
+            
+            self.num_owners = json_data["collection"]["stats"]["num_owners"]
+
+            self.one_day_average_price = json_data["collection"]["stats"]["one_day_average_price"]
+
+            self.one_day_change = json_data["collection"]["stats"]["one_day_change"]
+
+            self.one_day_sales = json_data["collection"]["stats"]["one_day_sales"]
+
+            self.one_day_volume = json_data["collection"]["stats"]["one_day_volume"]
+
+            self.seven_day_average_price = json_data["collection"]["stats"]["seven_day_average_price"]
+
+            self.seven_day_change = json_data["collection"]["stats"]["seven_day_change"]
+
+            self.seven_day_sales = json_data["collection"]["stats"]["seven_day_sales"]
+
+            self.seven_day_volume = json_data["collection"]["stats"]["seven_day_volume"]
+
+            self.thirty_day_average_price = json_data["collection"]["stats"]["thirty_day_average_price"]
+
+            self.thirty_day_change = json_data["collection"]["stats"]["thirty_day_change"]
+
+            self.thirty_day_sales = json_data["collection"]["stats"]["thirty_day_sales"]
+
+            self.thirty_day_volume = json_data["collection"]["stats"]["thirty_day_volume"]
+
+            self.total_sales = json_data["collection"]["stats"]["total_sales"]
+
+            self.total_supply = json_data["collection"]["stats"]["total_supply"]
+            
+            self.total_volume = json_data["collection"]["stats"]["total_volume"]
 
         # LAST SALE DETAILS
-        self.sale_timestamp = json_data["last_sale"]["event_timestamp"] 
-        self.eth_usd_price = json_data["last_sale"]["payment_token"]["usd_price"] # Current price of eth
-        self.last_sale_decimals = json_data["last_sale"]["payment_token"]["decimals"]
         try:
-            self.last_sale = json_data["last_sale"]["total_price"]
-
+            last_sale = json_data["last_sale"]
+            self.sale_timestamp = json_data["last_sale"]["event_timestamp"] 
+            last_sale = True
         except:
-            print("asset: {}, token_id: {} has no last sale".format(self.name, self.token_id)) 
-            self.last_sale = 0
+            last_sale = False
+        
+        if last_sale:
+            self.sale_timestamp = json_data["last_sale"]["event_timestamp"] 
+            self.eth_usd_price = json_data["last_sale"]["payment_token"]["usd_price"] # Current price of eth
+            self.last_sale_decimals = json_data["last_sale"]["payment_token"]["decimals"]
+            try:
+                self.last_sale = json_data["last_sale"]["total_price"]
+            except:
+                print("asset: {}, token_id: {} has no last sale".format(json_data["name"], json_data["token_id"])) 
+                self.last_sale = None
+        else:
+            print("asset: {}, token_id: {} has no last sale".format(json_data["name"], json_data["token_id"])) 
+            self.last_sale = None
 
         # SOCIAL MEDIA DETAILS
         try:
