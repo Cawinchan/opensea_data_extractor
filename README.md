@@ -56,29 +56,29 @@ print(bundle.assets[0].name)
     - `string` **description**: NFT Description. May not always be unique, can be repeated from collection description, can be null
     - `string` **asset_contract**: All NFTs in the collection follow this contract 
     - **collection**: Collection Data
-          - **traits**: Collection settings for traits
-          - **stats**: Can be empty. One, seven, thirty day data at point of query and total_sales, total_supply and total_volume for Collection.
-              - ~~
-              - ~~
-          - **chat_url**: can be null, social media data
-          - **description**: Collection Description
-          - **discord_url**: can be null
-          - **external_url**: can be null
-          - **medium_username**: can be null
-          - **slug**": Collection name used on opensea
-          - **telegram_url**: can be null
-          - **twitter_username**: can be null
-          - **instagram_username**: can be null
-          - **wiki_url**: can be null
+      - **traits**: Collection settings for traits
+      - **stats**: Can be empty. One, seven, thirty day data at point of query and total_sales, total_supply and total_volume for Collection.
+        - ~~
+        - ~~
+      - **chat_url**: can be null, social media data
+      - **description**: Collection Description
+      - **discord_url**: can be null
+      - **external_url**: can be null
+      - **medium_username**: can be null
+      - **slug**": Collection name used on opensea
+      - **telegram_url**: can be null
+      - **twitter_username**: can be null
+      - **instagram_username**: can be null
+      - **wiki_url**: can be null
     - **traits**: NFT Traits 
     - **last_sale**:
-          - **event_type**: Sales status 
-          - **event_timestamp**: sales timestamp
-          - **total_price**: Price paid for NFT (floating point is removed, needs to be divided by payment token decimals)
-          - **payment_token**: 
-              - **symbol**: "ETH"
-              - **name**: "Ether"
-              - **decimals**: Number of decimals removed to get rid of floating point
-              - `int` **Close**: ETH price 
-              - `int` **Volume**: ETH Volume
-              - `int` **Marketcap**: ETH MarketCap
+        - **event_type**: Sales status 
+        - **event_timestamp**: sales timestamp
+        - **total_price**: Price paid for NFT (floating point is removed, needs to be divided by payment token decimals)
+        - **payment_token**: 
+          - **symbol**: "ETH"
+          - **name**: "Ether"
+          - **decimals**: Number of decimals removed to get rid of floating point
+          - `int` **Close**: ETH price 
+          - `int` **Volume**: ETH Volume
+          - `int` **Marketcap**: ETH MarketCap
