@@ -21,10 +21,14 @@ class Asset:
         self.image_original_url = json_data["image_original_url"] # Note image_url instead of orignal choosen
         try:
             self.animation_url = json_data["animation_url"] # Can be the same as image_url
-            self.animation_original_url = json_data["animation_original_url"] # Can be the same as image_url
         except:
             self.animation_url = None
+
+        try:
+            self.animation_original_url = json_data["animation_original_url"] # Can be the same as image_url
+        except:
             self.animation_original_url = None
+            
         if self.image_url == self.animation_url:
             self.animation_url = None
         try:
@@ -96,6 +100,11 @@ class Asset:
             last_sale = True
         except:
             last_sale = False
+
+        try:
+            self.last_sale_symbol = json_data["last_sale"]["payment_token"]["symbol"]
+        except:
+            pass
         
         if last_sale:
             self.sale_timestamp = json_data["last_sale"]["event_timestamp"] 

@@ -37,7 +37,6 @@ def get_events(
     
     only_opensea: Restrict to events on OpenSea auctions. Can be true or false
     boolean
-    
 
     auction_type: Filter by an auction type. Can be english for English Auctions, dutch for fixed-price and declining-price sell orders (Dutch Auctions), or min-price for CryptoPunks bidding auctions.
     string
