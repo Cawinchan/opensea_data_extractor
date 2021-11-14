@@ -26,7 +26,7 @@ import sys
 from opensea_local import *
 
 from opensea_local.models.asset import Asset
-from src.nft_collection import nft_format
+from src.nft_collection import nft_format, TOTAL_FORMATS
 
 logging.basicConfig(filename='example.log', level=logging.DEBUG)
 
@@ -34,6 +34,9 @@ def has_audio(filename):
     ''' Finds if video has audio present 
 
     Output: True or False
+
+    How to install ffprobe on windows, https://www.wikihow.com/Install-FFmpeg-on-Windows 
+    FFmpeg contains ffprobe
     
     '''
     result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
@@ -45,15 +48,21 @@ def has_audio(filename):
     return int(result.stdout) == 2
 
 def sanatise_text(text):
-    ''' Removes all non-ASCII characters and replaces end of line (eol) (\n) with space (" ")  
+    ''' Removes all non-ASCII characters and 
+
+    replaces end of line (eol) (\\n) with space (" ")  
+    replace raw string (\\r) with space 
+    replace unicode string (\\u) with space 
+
     
     Output: santised text
     
     '''
-    non_ascii_text = str(text).encode().decode()
-    non_ascii_text_removed_eol = non_ascii_text.replace("\n"," ")
-    
-    return non_ascii_text_removed_eol
+    if type(text) == str:
+        non_ascii_text = text.encode('ascii', 'ignore').decode()
+        non_ascii_text_removed = " ".join(non_ascii_text.strip().split())
+        return non_ascii_text_removed
+    return text
 
 def extract_media(dir="data/raw/json",json_output_dir="data/preprocessed/json",output_dir="data/preprocessed/media",tmp_dir='data/preprocessed/media/tmp'):    
     # Iterate over files in directory
@@ -75,26 +84,28 @@ def extract_media(dir="data/raw/json",json_output_dir="data/preprocessed/json",o
     }
     
     '''
-    # test_lst = [
-    # # 'async-music_96.txt', # 0
-    # # 'boonjiproject_230.txt', # 1
-    # # 'boredapeyachtclub_31.txt', # 2 
-    # # 'cryptopunks_1440.txt', # 3 
-    # # 'doodles-official_567.txt', # 4
-    # # 'fidenza-by-tyler-hobbs_3000851.txt', # 5
-    # # 'lostpoets_2046.txt', # 6
-    # # 'theshiboshis_9727.txt', # 7
-    # # 'veefriends_59.txt', # 8
-    # # 'jinglebe-nft-collection_5.txt', # 9
-    # # 'niftysaxspheres_300.txt', # 10
-    # # 'spottiewifi_250.txt', # 11
-    # # 'eulerbeats_562674402050.txt', # 12
-    # # 'eulerbeats-enigma_1327145222656.txt', # 13
-    # # 'the-weeknd-x-strangeloop-studio_37100040030.txt', # 14
-    # # 'song-a-day_9568959248260798785971284012371444320685936875866980297297035089013637121.txt', # 15
-    # # 'superrare_4818.txt', # 16
-    # # 'rarible_15763.txt'# 17 
-    # ]
+    test_lst = [
+    'async-music_96.txt', # 0
+    'boonjiproject_230.txt', # 1
+    'boredapeyachtclub_31.txt', # 2 
+    'cryptopunks_1440.txt', # 3 
+    'doodles-official_567.txt', # 4
+    'fidenza-by-tyler-hobbs_3000851.txt', # 5
+    'lostpoets_2046.txt', # 6
+    'theshiboshis_9727.txt', # 7
+    'veefriends_59.txt', # 8
+    'jinglebe-nft-collection_5.txt', # 9
+    'niftysaxspheres_300.txt', # 10
+    'spottiewifi_250.txt', # 11
+    'eulerbeats_562674402050.txt', # 12
+    'eulerbeats-enigma_1327145222656.txt', # 13
+    'the-weeknd-x-strangeloop-studio_37100040030.txt', # 14
+    'song-a-day_9568959248260798785971284012371444320685936875866980297297035089013637121.txt', # 15
+    'superrare_4818.txt', # 16
+    'rarible_15763.txt'# 17 
+    'jinglebe-nft-collection_103.txt',
+    'eulerbeats-enigma_4535620207105.txt'
+    ]
 
     RID = 0
     print("number of files",len(os.listdir(dir)))
@@ -122,6 +133,8 @@ def extract_media(dir="data/raw/json",json_output_dir="data/preprocessed/json",o
             if not len(glob.glob(output_dir+"/"+str(RID)+"*")) >= 1 or not (len(glob.glob(json_output_dir+"/"+str(RID)+"*")) >= 1):
                 file = open(f, "r")
                 asset = Asset(json.loads(file.read()))
+                # print("gate -1")
+
                 if asset.last_sale_symbol in ('ETH','WETH'): # Ensures that we only work with ETH, note that we will assume ETH == WETH 
                     # Find Image/Animation assets step
                     image_conversion = False
@@ -130,9 +143,14 @@ def extract_media(dir="data/raw/json",json_output_dir="data/preprocessed/json",o
                     has_audio_in_video = False
                     try:
                         image_url = asset.image_original_url
-                        image_response = requests.get(image_url)
+                        print("gate -1.2")
+                        image_response = requests.get(image_url,timeout=10)
+                        print("gate -1.4")
                         content_type = image_response.headers['content-type']
+                        print("gate -1.6")
                         image_extension = mimetypes.guess_extension(content_type)
+                        print("gate -2")
+
                         if image_extension == '.jpe':
                             image_extension = '.jpg'
                         if image_extension in ('.svg','.png') and '.jpg' in nft_type_formats: # We guarentee that every coversion must be usablen. We accept images, however, it is currently in the wrong format
@@ -156,13 +174,16 @@ def extract_media(dir="data/raw/json",json_output_dir="data/preprocessed/json",o
                                 im1.save("{}/{}{}".format(tmp_dir,RID,".jpg"))
                                 image_conversion = True 
                             image_extension = '.jpg'
+                        print("gate -2.5",image_extension)
 
                         if image_extension not in nft_type_formats or image_extension == None:
                             raise Exception
+                        print("gate -3")
+
                     except Exception:
                         try:
                             image_url = asset.image_url
-                            image_response = requests.get(image_url)
+                            image_response = requests.get(image_url,timeout=10)
                             content_type = image_response.headers['content-type']
                             image_extension = mimetypes.guess_extension(content_type)
                             if image_extension == '.jpe':
@@ -194,14 +215,17 @@ def extract_media(dir="data/raw/json",json_output_dir="data/preprocessed/json",o
                                 image_extension = None
                                 logging.debug('{} was unable to get image, error: {}'.format(asset.image_url,image_inst))
                                 print(image_inst) 
+                    print("gate 0")
+
                     try:
                         animation_url = asset.animation_original_url
-                        animation_response = requests.get(animation_url)
+                        animation_response = requests.get(animation_url,timeout=10)
                         content_type = animation_response.headers['content-type']
                         animation_extension = mimetypes.guess_extension(content_type)
                         if animation_extension == '.mp2':
                             animation_extension = '.mp3'
-                        if animation_extension == '.mp4' and '.mp3' in nft_type_formats:
+                        # Only other marketplaces can have all 4 types of files. As such we avoid converting all .mp4 formats to .mp3 in these marketplaces
+                        if animation_extension == '.mp4' and '.mp3' in nft_type_formats and len(nft_type_formats) != TOTAL_FORMATS:
                             try:    
                                 with open("{}/{}{}".format(tmp_dir,RID,animation_extension), 'wb') as f:
                                     f.write(animation_response.content)
@@ -220,12 +244,12 @@ def extract_media(dir="data/raw/json",json_output_dir="data/preprocessed/json",o
                     except Exception as animation_inst:
                             try:
                                 animation_url = asset.animation_url
-                                animation_response = requests.get(animation_url)
+                                animation_response = requests.get(animation_url,timeout=10)
                                 content_type = animation_response.headers['content-type']
                                 animation_extension = mimetypes.guess_extension(content_type)
                                 if animation_extension == '.mp2':
                                     animation_extension = '.mp3'
-                                if animation_extension == '.mp4' and '.mp3' in nft_type_formats:
+                                if animation_extension == '.mp4' and '.mp3' in nft_type_formats and len(nft_type_formats) != TOTAL_FORMATS:
                                     try:    
                                         with open("{}/{}{}".format(tmp_dir,RID,animation_extension), 'wb') as f:
                                             f.write(animation_response.content)
@@ -246,6 +270,7 @@ def extract_media(dir="data/raw/json",json_output_dir="data/preprocessed/json",o
                                     print(animation_url,animation_inst) 
                     
                     # Download Image/Animation assets step
+                    print("gate 1")
                     logging.debug('{},{}'.format(image_extension,animation_extension))
                     logging.debug('{},{}'.format(image_url,animation_url))
                     image_download = False
@@ -273,6 +298,7 @@ def extract_media(dir="data/raw/json",json_output_dir="data/preprocessed/json",o
                                         print("Error downloading {} {} image {} extension".format(RID,image_url,image_extension))
                                         logging.debug("Error downloading {} {} image {} extension".format(RID,image_url,image_extension))
 
+                    print("gate 2")
 
                     if animation_extension:
                         if animation_extension in nft_type_formats or animation_conversion:
@@ -280,25 +306,37 @@ def extract_media(dir="data/raw/json",json_output_dir="data/preprocessed/json",o
                                 copyfile("{}/{}{}".format(tmp_dir,RID,animation_extension), "{}/{}{}".format(output_dir,RID,animation_extension))
                                 media_filenames.append("{}/{}{}".format(output_dir,RID,animation_extension))
                                 animation_download = True
-                            try:    
-                                with open("{}/{}{}".format(output_dir,RID,animation_extension), 'wb') as f:
-                                    f.write(animation_response.content)
-                                media_filenames.append("{}/{}{}".format(output_dir,RID,animation_extension))
-                                animation_download = True
-                            except:
-                                try:
-                                    urllib.request.urlretrieve(animation_url, "{}/{}{}".format(output_dir,RID,animation_extension)) 
+                            else:
+                                try:    
+                                    with open("{}/{}{}".format(output_dir,RID,animation_extension), 'wb') as f:
+                                        f.write(animation_response.content)
                                     media_filenames.append("{}/{}{}".format(output_dir,RID,animation_extension))
                                     animation_download = True
                                 except:
-                                    print("Error downloading {} {} animation {} extension".format(RID,animation_url,animation_extension))
-                                    logging.debug("Error downloading {} {} image {} extension".format(RID,image_url,image_extension))
+                                    try:
+                                        urllib.request.urlretrieve(animation_url, "{}/{}{}".format(output_dir,RID,animation_extension)) 
+                                        media_filenames.append("{}/{}{}".format(output_dir,RID,animation_extension))
+                                        animation_download = True
+                                    except:
+                                        print("Error downloading {} {} animation {} extension".format(RID,animation_url,animation_extension))
+                                        logging.debug("Error downloading {} {} image {} extension".format(RID,image_url,image_extension))
                     if animation_download:
                         if animation_extension == ".mp4":
                             has_audio_in_video = has_audio("{}/{}{}".format(output_dir,RID,animation_extension))
+                    print("gate 3")
 
                     # Create Json Metadata
                     json_metadata = {}
+                    name = None
+                    description = None
+                    collection_name = None
+                    collection_description = None
+                    eth_price = None
+                    eth_price_decimal = None
+                    transaction_time = None
+                    usd_price = None
+                    usd_volume = None
+                    usd_marketcap = None
 
                     # Find NFT Textual Data
                     try: 
@@ -307,11 +345,13 @@ def extract_media(dir="data/raw/json",json_output_dir="data/preprocessed/json",o
                         else:
                             name = sanatise_text(asset.name)
                         description = sanatise_text(asset.description)
+                        print(asset.collection_name,asset.collection_description)
                         collection_name = sanatise_text(asset.collection_name)
                         collection_description = sanatise_text(asset.collection_description)
                     except Exception as asset_data_inst:
                         logging.debug('Unable to get asset_textual_data, error: {}'.format(asset_data_inst))
                         print('Unable to get asset_textual_data',asset_data_inst) 
+                    print("gate 4")
 
                     # Find NFT last sales data
                     try: 
@@ -341,14 +381,17 @@ def extract_media(dir="data/raw/json",json_output_dir="data/preprocessed/json",o
                     json_metadata['media_filenames'] = media_filenames
                     json_metadata['has_audio_in_video'] = has_audio_in_video
 
-                    if len(json_metadata) == 12: # checks if we have all our columns
+                    if len(json_metadata) == 12 and (image_download or animation_download): # checks if we have all our columns and downloaded a media
                         with open("{}/{}{}".format(json_output_dir,RID,'.json'), 'w') as f:
                             json.dump(json_metadata, f)
                         print("json completed!")
                     else:
                         print("Error with creating json, missing parameters", name , description , collection_name , collection_description \
                         , eth_price , eth_price_decimal , usd_price , usd_volume , usd_marketcap , transaction_time \
-                        , media_filenames , has_audio_in_video)                        
+                        , media_filenames , has_audio_in_video)    
+
+                    print("gate 5")
+                    
 
                     if image_download or animation_download:
                         print("media downloaded!")

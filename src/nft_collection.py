@@ -10,6 +10,8 @@ We have 4 tags: Image: Only jpg
                 GIF: Only gif
 '''
 
+TOTAL_FORMATS = 4
+
 collection = {
     "cryptopunks": "0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB", # (Image: JPG)
     "boredapeyachtclub": "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d", # (Image: JPG)
