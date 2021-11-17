@@ -12,6 +12,7 @@ def get_assets(
     offset: int = 0,
     verified_only: bool = False,
     asset_contract_address: str = "",
+    collection: str = ""
     # token_ids: str = ""
 ) -> Union[List[Asset], Response]:
     """
@@ -46,6 +47,7 @@ def get_assets(
         "offset": offset,
         "limit": limit,
         "asset_contract_address": asset_contract_address,
+        "collection": collection
         # "token_ids": token_ids
     }
 
