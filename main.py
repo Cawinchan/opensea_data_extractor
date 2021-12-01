@@ -17,9 +17,10 @@ def main(collection, number_of_nfts_per_collection=5000, maximum_nfts_checked=30
         output_media_dir(str): location of output media
     
     '''
-    # nft_download(collection,number_of_nfts_per_collection,maximum_nfts_checked, order_direction, order_by)
-    # extract_media(dir,output_json_dir,output_media_dir)
+    nft_download(collection,number_of_nfts_per_collection,maximum_nfts_checked, order_direction, order_by)
+    extract_media(dir,output_json_dir,output_media_dir)
     check_lengths(output_json_dir,output_media_dir)
+    print("Done!")
     return
 
 
