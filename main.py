@@ -1,5 +1,5 @@
 from src.data_download.nft_downloader import nft_download
-from src.data_preprocess.preprocess_data import extract_media, check_lengths
+from src.data_sanitation.sanitise_data import extract_media, check_lengths
 import subprocess
 import ffmpeg
 from src.nft_collection import collection
