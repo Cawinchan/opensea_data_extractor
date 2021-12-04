@@ -7,3 +7,9 @@ librosa == 0.8.1
 pydub == 0.25.1
 svglib == 1.1.0
 moviepy == 1.0.3
+python3.7-venv
+freeglut3-dev
+libgtk2.0-dev
+libasound2-dev
+libsndfile1-dev
+ffmpeg
