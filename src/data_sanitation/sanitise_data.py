@@ -1,16 +1,12 @@
 import json
-from io import BytesIO
 import shutil
-from reportlab.graphics.shapes import Shape
 import requests
 from PIL import Image
 import mimetypes
 import urllib.request
 import os
 import logging
-from matplotlib import image
 import pandas as pd
-import numpy as np
 import glob 
 from moviepy.editor import VideoFileClip
 from svglib.svglib import svg2rlg

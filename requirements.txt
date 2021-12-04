@@ -1,2 +1,10 @@
 requests == 2.22.0
 setuptools == 45.2.0
+matplotlib == 3.2.2
+pandas_profiling == 2.10.0
+scikit-learn == 0.23.2
+seaborn == 0.10.1
+librosa == 0.8.1
+pydub == 0.25.1
+svglib == 1.1.0
+moviepy == 1.0.3
