@@ -1,4 +1,4 @@
-requests == 2.22.0
+requests == 2.24.0
 setuptools == 45.2.0
 matplotlib == 3.2.2
 pandas_profiling == 2.10.0
