@@ -5,13 +5,12 @@ import glob
 
 from opensea_local import assets,bundles,common,events
 
-def nft_download(collection,number_of_nfts_per_collection,maximum_nfts_checked,order_direction,order_by,output_dir="data/raw/json"):
+def nft_download(collection,number_of_nfts_per_collection,order_direction,order_by,output_dir="data/raw/json"):
     """ Downloads json of nft's in collection to data/raw
 
     args:
         collection(dict): key: nft collection name value: nft collection address
         number_of_nfts_per_collection(int): maximum possible nft's in a collection
-        maximum_nfts_checked(int): after this number of nft's are checked we end the loop, at 
         order_direction(str): Available options are "asc" ascending, "desc" decending
         order_by(str): Available options are 'token_id', 'sale_date', 'sale_count', 'sale_price'.
 
